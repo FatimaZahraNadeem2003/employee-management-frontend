@@ -76,10 +76,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (userData.role === 'admin') {
         router.push('/Admin/dashboard');
-      } else if (userData.role === 'teacher') {
-        router.push('/Teacher/dashboard');
+      } else if (userData.role === 'manager') {
+        router.push('/Manager/dashboard');
       } else {
-        router.push('/Student/dashboard');
+        router.push('/Employee/dashboard');
       }
       
     } catch (error: any) {
@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (firstName: string, lastName: string, email: string, password: string, role: string) => {
     try {
-      console.log('Registering user:', { firstName, lastName, email, role }); 
+      console.log('Registering user:', { firstName, lastName, email, role });
       
       const response = await http.post('/auth/register', { 
         firstName, 
@@ -108,7 +108,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         role 
       });
       
-      console.log('Registration response:', response.data); 
+      console.log('Registration response:', response.data);
       
       const { user: userData, token: authToken } = response.data;
       
@@ -127,14 +127,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (userData.role === 'admin') {
         router.push('/Admin/dashboard');
-      } else if (userData.role === 'teacher') {
-        router.push('/Teacher/dashboard');
+      } else if (userData.role === 'manager') {
+        router.push('/Manager/dashboard');
       } else {
-        router.push('/Student/dashboard');
+        router.push('/Employee/dashboard');
       }
       
     } catch (error: any) {
-      console.error('Registration error in context:', error); 
+      console.error('Registration error in context:', error);
       const errorMessage = error.response?.data?.msg || error.response?.data?.message || 'Registration failed';
       toast.error(errorMessage, {
         icon: '❌',
