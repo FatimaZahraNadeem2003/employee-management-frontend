@@ -120,3 +120,24 @@ body {
   color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
 }
+
+/* New teal/cyan/indigo theme colors */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #14b89e 0%, #06b6d4 50%, #6366f1 100%);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #14b89e 0%, #06b6d4 100%);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0d9f87 0%, #0594b3 100%);
+}
+
+.border-accent {
+  border-color: #14b89e;
+}
+
+.text-accent {
+  color: #14b89e;
+}
