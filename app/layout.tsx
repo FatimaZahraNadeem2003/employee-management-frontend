@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Education Management System",
-  description: "A comprehensive platform for managing students, teachers, and courses",
+  title: "Employee Management System",
+  description: "A comprehensive platform for managing employees, managers, and projects",
 };
 
 export const viewport = {
@@ -39,13 +39,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative min-h-screen`}
       >
-        <div className="fixed inset-0 bg-gradient-to-br from-sky-400 via-blue-400 to-indigo-500 -z-20"></div>
+        <div className="fixed inset-0 bg-gradient-to-br from-teal-400 via-cyan-500 to-indigo-600 -z-20"></div>
         
         <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-          <div className="absolute top-20 left-10 w-64 h-64 bg-yellow-300/20 rounded-full filter blur-3xl animate-float-slow"></div>
-          <div className="absolute bottom-20 right-10 w-80 h-80 bg-pink-300/20 rounded-full filter blur-3xl animate-float-slower"></div>
-          <div className="absolute top-40 right-40 w-48 h-48 bg-purple-300/20 rounded-full filter blur-3xl animate-pulse-slow"></div>
-          <div className="absolute bottom-40 left-20 w-56 h-56 bg-orange-300/20 rounded-full filter blur-3xl animate-float"></div>
+          <div className="absolute top-20 left-10 w-64 h-64 bg-teal-300/20 rounded-full filter blur-3xl animate-float-slow"></div>
+          <div className="absolute bottom-20 right-10 w-80 h-80 bg-cyan-300/20 rounded-full filter blur-3xl animate-float-slower"></div>
+          <div className="absolute top-40 right-40 w-48 h-48 bg-indigo-300/20 rounded-full filter blur-3xl animate-pulse-slow"></div>
+          <div className="absolute bottom-40 left-20 w-56 h-56 bg-emerald-300/20 rounded-full filter blur-3xl animate-float"></div>
         </div>
 
         <div className="relative z-10">
@@ -67,13 +67,13 @@ export default function RootLayout({
                 success: {
                   duration: 3000,
                   style: {
-                    background: "rgba(34, 197, 94, 0.95)",
+                    background: "rgba(16, 185, 129, 0.95)",
                     color: "#ffffff",
                     border: "1px solid rgba(255, 255, 255, 0.3)",
                   },
                   iconTheme: {
                     primary: '#ffffff',
-                    secondary: '#22c55e',
+                    secondary: '#10b981',
                   },
                 },
                 error: {
