@@ -4,7 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  role: 'admin' | 'teacher' | 'student';
+  role: 'admin' | 'manager' | 'employee';
   profile?: any;
 }
 
@@ -20,16 +20,18 @@ export interface RegisterData {
   email: string;
   password: string;
   role: string;
-  class?: string;
+  class?: string; 
   contactNumber?: string;
   parentName?: string;
   parentContact?: string;
   employeeId?: string;
   qualification?: string;
   specialization?: string;
+  position?: string;
+  department?: string;
 }
 
-export interface Student {
+export interface Employee {
   _id: string;
   userId: {
     _id: string;
@@ -37,6 +39,9 @@ export interface Student {
     lastName: string;
     email: string;
   };
+  employeeId: string;
+  position: string;
+  department: string;
   dateOfBirth?: string;
   gender?: string;
   contactNumber?: string;
@@ -47,18 +52,19 @@ export interface Student {
     zipCode?: string;
     country?: string;
   };
-  parentName?: string;
-  parentContact?: string;
-  class: string;
-  section?: string;
-  rollNumber?: string;
-  admissionDate: string;
-  status: 'active' | 'inactive' | 'graduated' | 'suspended';
+  emergencyContact?: {
+    name?: string;
+    phone?: string;
+    relationship?: string;
+  };
+  joiningDate: string;
+  status: 'active' | 'on-leave' | 'terminated' | 'probation';
+  salary?: number;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Teacher {
+export interface Manager {
   _id: string;
   userId: {
     _id: string;
@@ -67,8 +73,8 @@ export interface Teacher {
     email: string;
   };
   employeeId: string;
+  department: string;
   qualification: string;
-  specialization: string;
   experience?: number;
   dateOfBirth?: string;
   gender?: string;
@@ -88,82 +94,70 @@ export interface Teacher {
   updatedAt: string;
 }
 
-export interface Course {
+export interface Project {
   _id: string;
   name: string;
   code: string;
   description: string;
-  teacherId?: string | Teacher;
-  credits: number;
-  duration: string;
+  managerId?: string | Manager;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  startDate: string;
+  endDate: string;
   department: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
-  syllabus?: string;
-  prerequisites?: string[];
-  maxStudents: number;
-  status: 'active' | 'inactive' | 'upcoming' | 'completed';
-  enrolledCount?: number;
+  status: 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled';
+  budget?: number;
+  resources?: string[];
+  assignedCount?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Assignment {
+  _id: string;
+  employeeId: Employee | string;
+  projectId: Project | string;
+  assignmentDate: string;
+  status: 'active' | 'completed' | 'removed' | 'pending';
+  role?: string;
+  completionPercentage?: number;
+  completionDate?: string;
+  performanceRating?: number;
+  remarks?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Performance {
+  _id: string;
+  employeeId: Employee | string;
+  projectId: Project | string;
+  reviewerId: Manager | string;
+  reviewType: 'quarterly' | 'annual' | 'project' | 'probation';
+  reviewName: string;
+  maxScore: number;
+  obtainedScore: number;
+  percentage?: number;
+  rating?: 'Outstanding' | 'Excellent' | 'Good' | 'Satisfactory' | 'Needs Improvement' | 'Unsatisfactory';
+  comments?: string;
+  reviewDate: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface Schedule {
   _id: string;
-  courseId: Course | string;
-  teacherId: Teacher | string;
+  projectId: Project | string;
+  managerId: Manager | string;
   dayOfWeek: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
   startTime: string;
   endTime: string;
-  room: string;
+  location: string;
   building?: string;
-  duration?: number;
+  meetingType?: 'meeting' | 'workshop' | 'presentation' | 'review' | 'training';
   semester: string;
   academicYear: string;
   isRecurring: boolean;
   status: 'scheduled' | 'cancelled' | 'completed';
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Enrollment {
-  _id: string;
-  studentId: Student | string;
-  courseId: Course | string;
-  enrollmentDate: string;
-  status: 'enrolled' | 'dropped' | 'completed' | 'pending';
-  progress?: number;
-  completionDate?: string;
-  grade?: string;
-  marksObtained?: number;
-  remarks?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Grade {
-  _id: string;
-  studentId: Student | string;
-  courseId: Course | string;
-  teacherId: Teacher | string;
-  assessmentType: 'quiz' | 'assignment' | 'midterm' | 'final' | 'project' | 'participation' | 'other';
-  assessmentName: string;
-  maxMarks: number;
-  obtainedMarks: number;
-  percentage?: number;
-  grade?: string;
-  remarks?: string;
-  submittedAt: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Remark {
-  _id: string;
-  studentId: Student | string;
-  teacherId: Teacher | string;
-  courseId?: Course | string;
-  remark: string;
-  createdBy: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -189,22 +183,22 @@ export interface PaginatedResponse<T> {
 
 export interface DashboardStats {
   overview: {
-    totalStudents: number;
-    totalTeachers: number;
-    totalCourses: number;
-    totalEnrollments: number;
-    activeCourses: number;
-    activeEnrollments: number;
+    totalEmployees: number;
+    totalManagers: number;
+    totalProjects: number;
+    totalAssignments: number;
+    activeProjects: number;
+    activeAssignments: number;
     completionRate: number;
-    avgStudentsPerCourse: number;
+    avgEmployeesPerProject: number;
   };
-  todayClasses: {
+  todayMeetings: {
     count: number;
-    classes: Schedule[];
+    meetings: Schedule[];
   };
-  popularCourses: Array<{
+  popularProjects: Array<{
     _id: string;
-    course: {
+    project: {
       name: string;
       code: string;
       department: string;
@@ -212,6 +206,6 @@ export interface DashboardStats {
     count: number;
   }>;
   recentActivity: {
-    enrollments: Enrollment[];
+    assignments: Assignment[];
   };
 }

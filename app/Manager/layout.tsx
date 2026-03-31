@@ -13,6 +13,7 @@ import {
   Award,
   LogOut,
   Menu,
+  Briefcase,
   X,
   ChevronDown,
   UserCircle,

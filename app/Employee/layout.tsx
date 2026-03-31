@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   X,
+  Briefcase,
   ChevronDown,
   UserCircle,
   TrendingUp,

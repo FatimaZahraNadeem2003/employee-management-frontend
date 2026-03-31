@@ -4,7 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  role: 'admin' | 'teacher' | 'student';
+  role: 'admin' | 'manager' | 'employee';
   profile?: any;
 }
 
@@ -20,11 +20,9 @@ export interface RegisterData {
   email: string;
   password: string;
   role: string;
-  class?: string;
-  contactNumber?: string;
-  parentName?: string;
-  parentContact?: string;
   employeeId?: string;
+  position?: string;
+  department?: string;
   qualification?: string;
   specialization?: string;
 }
