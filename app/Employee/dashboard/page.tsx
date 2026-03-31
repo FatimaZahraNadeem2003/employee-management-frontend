@@ -152,7 +152,7 @@ const EmployeeDashboard = () => {
           {timeGreeting}, {data?.profile?.firstName || 'Employee'}! 👋
         </h1>
         <p className="text-white/85">
-          Welcome back to your employee dashboard. Here's your work progress.
+          Welcome back to your employee dashboard. {`Here's`} your work progress.
         </p>
         <div className="mt-4 flex flex-wrap gap-4 text-sm text-white/60">
           <span>📋 Position: {data?.profile?.position}</span>
