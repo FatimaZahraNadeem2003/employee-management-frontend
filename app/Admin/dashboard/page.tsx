@@ -101,7 +101,7 @@ const AdminDashboard = () => {
           {timeGreeting}, {user?.firstName}! 👋
         </h1>
         <p className="text-white/85">
-          Welcome back to your admin dashboard. Here's what's happening today.
+          Welcome back to your admin dashboard. {`Here's what's`} happening today.
         </p>
       </div>
 
