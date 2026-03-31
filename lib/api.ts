@@ -17,13 +17,16 @@ export interface RegisterData {
   email: string;
   password: string;
   role: string;
-  class?: string;
   contactNumber?: string;
-  parentName?: string;
-  parentContact?: string;
   employeeId?: string;
+  position?: string;
+  department?: string;
   qualification?: string;
   specialization?: string;
+  experience?: number;
+  class?: string; 
+  parentName?: string;
+  parentContact?: string;
 }
 
 export const authApi = {
@@ -43,18 +46,20 @@ export const authApi = {
   },
 };
 
-
-export interface StudentData {
+export interface EmployeeData {
   firstName: string;
   lastName: string;
   email: string;
   password?: string;
-  class: string;
-  section?: string;
-  rollNumber?: string;
+  employeeId: string;
+  position: string;
+  department: string;
   contactNumber?: string;
-  parentName?: string;
-  parentContact?: string;
+  emergencyContact?: {
+    name?: string;
+    phone?: string;
+    relationship?: string;
+  };
   dateOfBirth?: string;
   gender?: string;
   address?: {
@@ -64,141 +69,163 @@ export interface StudentData {
     zipCode?: string;
     country?: string;
   };
+  salary?: number;
+  joiningDate?: string;
   status?: string;
 }
 
-export interface TeacherData {
+export interface ManagerData {
   firstName: string;
   lastName: string;
   email: string;
   password?: string;
   employeeId: string;
+  department: string;
   qualification: string;
-  specialization: string;
   experience?: number;
   contactNumber: string;
   emergencyContact?: string;
   dateOfBirth?: string;
   gender?: string;
-  address?: any;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  joiningDate?: string;
   bio?: string;
   status?: string;
 }
 
-export interface CourseData {
+export interface ProjectData {
   name: string;
   code: string;
   description: string;
-  teacherId?: string;
-  credits: number;
-  duration: string;
+  managerId?: string;
+  priority?: string;
+  startDate: string;
+  endDate: string;
   department: string;
-  level?: string;
-  syllabus?: string;
-  prerequisites?: string[];
-  maxStudents?: number;
   status?: string;
+  budget?: number;
+  resources?: string[];
 }
 
 export interface ScheduleData {
-  courseId: string;
-  teacherId: string;
+  projectId: string;
+  managerId: string;
   dayOfWeek: string;
   startTime: string;
   endTime: string;
-  room: string;
+  location: string;
   building?: string;
+  meetingType?: string;
   semester: string;
   academicYear: string;
   isRecurring?: boolean;
   status?: string;
 }
 
-export interface EnrollmentData {
-  studentId: string;
-  courseId: string;
+export interface AssignmentData {
+  employeeId: string;
+  projectId: string;
   status?: string;
-  progress?: number;
+  role?: string;
+  completionPercentage?: number;
+  performanceRating?: number;
+  remarks?: string;
+}
+
+export interface PerformanceData {
+  employeeId: string;
+  projectId: string;
+  reviewType: string;
+  reviewName: string;
+  maxScore: number;
+  obtainedScore: number;
+  comments?: string;
 }
 
 export const adminApi = {
-  students: {
+  employees: {
     getAll: async (params?: any) => {
-      const response = await http.get("/admin/students", { params });
+      const response = await http.get("/admin/employees", { params });
       return response.data;
     },
     getById: async (id: string) => {
-      const response = await http.get(`/admin/students/${id}`);
+      const response = await http.get(`/admin/employees/${id}`);
       return response.data;
     },
-    create: async (data: StudentData) => {
-      const response = await http.post("/admin/students", data);
+    create: async (data: EmployeeData) => {
+      const response = await http.post("/admin/employees", data);
       return response.data;
     },
-    update: async (id: string, data: Partial<StudentData>) => {
-      const response = await http.put(`/admin/students/${id}`, data);
+    update: async (id: string, data: Partial<EmployeeData>) => {
+      const response = await http.put(`/admin/employees/${id}`, data);
       return response.data;
     },
     delete: async (id: string) => {
-      const response = await http.delete(`/admin/students/${id}`);
+      const response = await http.delete(`/admin/employees/${id}`);
       return response.data;
     },
   },
 
-  teachers: {
+  managers: {
     getAll: async (params?: any) => {
-      const response = await http.get("/admin/teachers", { params });
+      const response = await http.get("/admin/managers", { params });
       return response.data;
     },
     getById: async (id: string) => {
-      const response = await http.get(`/admin/teachers/${id}`);
+      const response = await http.get(`/admin/managers/${id}`);
       return response.data;
     },
-    create: async (data: TeacherData) => {
-      const response = await http.post("/admin/teachers", data);
+    create: async (data: ManagerData) => {
+      const response = await http.post("/admin/managers", data);
       return response.data;
     },
-    update: async (id: string, data: Partial<TeacherData>) => {
-      const response = await http.put(`/admin/teachers/${id}`, data);
+    update: async (id: string, data: Partial<ManagerData>) => {
+      const response = await http.put(`/admin/managers/${id}`, data);
       return response.data;
     },
     delete: async (id: string) => {
-      const response = await http.delete(`/admin/teachers/${id}`);
+      const response = await http.delete(`/admin/managers/${id}`);
       return response.data;
     },
     getStats: async () => {
-      const response = await http.get("/admin/teachers/stats");
+      const response = await http.get("/admin/managers/stats");
       return response.data;
     },
   },
 
-  courses: {
+  projects: {
     getAll: async (params?: any) => {
-      const response = await http.get("/admin/courses", { params });
+      const response = await http.get("/admin/projects", { params });
       return response.data;
     },
     getById: async (id: string) => {
-      const response = await http.get(`/admin/courses/${id}`);
+      const response = await http.get(`/admin/projects/${id}`);
       return response.data;
     },
-    create: async (data: CourseData) => {
-      const response = await http.post("/admin/courses", data);
+    create: async (data: ProjectData) => {
+      const response = await http.post("/admin/projects", data);
       return response.data;
     },
-    update: async (id: string, data: Partial<CourseData>) => {
-      const response = await http.put(`/admin/courses/${id}`, data);
+    update: async (id: string, data: Partial<ProjectData>) => {
+      const response = await http.put(`/admin/projects/${id}`, data);
       return response.data;
     },
     delete: async (id: string) => {
-      const response = await http.delete(`/admin/courses/${id}`);
+      const response = await http.delete(`/admin/projects/${id}`);
       return response.data;
     },
-    assignTeacher: async (courseId: string, teacherId: string) => {
-      const response = await http.post(`/admin/courses/${courseId}/assign-teacher`, { teacherId });
+    assignManager: async (projectId: string, managerId: string) => {
+      const response = await http.post(`/admin/projects/${projectId}/assign-manager`, { managerId });
       return response.data;
     },
     getStats: async () => {
-      const response = await http.get("/admin/courses/stats");
+      const response = await http.get("/admin/projects/stats");
       return response.data;
     },
   },
@@ -230,33 +257,33 @@ export const adminApi = {
     },
   },
 
-  enrollments: {
+  assignments: {
     getAll: async (params?: any) => {
-      const response = await http.get("/admin/enrollments", { params });
+      const response = await http.get("/admin/assignments", { params });
       return response.data;
     },
     getById: async (id: string) => {
-      const response = await http.get(`/admin/enrollments/${id}`);
+      const response = await http.get(`/admin/assignments/${id}`);
       return response.data;
     },
-    create: async (data: EnrollmentData) => {
-      const response = await http.post("/admin/enrollments", data);
+    create: async (data: AssignmentData) => {
+      const response = await http.post("/admin/assignments", data);
       return response.data;
     },
-    update: async (id: string, data: Partial<EnrollmentData>) => {
-      const response = await http.put(`/admin/enrollments/${id}`, data);
+    update: async (id: string, data: Partial<AssignmentData>) => {
+      const response = await http.put(`/admin/assignments/${id}`, data);
       return response.data;
     },
     delete: async (id: string) => {
-      const response = await http.delete(`/admin/enrollments/${id}`);
+      const response = await http.delete(`/admin/assignments/${id}`);
       return response.data;
     },
-    getStudentCourses: async (studentId: string, params?: any) => {
-      const response = await http.get(`/admin/enrollments/student/${studentId}`, { params });
+    getEmployeeProjects: async (employeeId: string, params?: any) => {
+      const response = await http.get(`/admin/assignments/employee/${employeeId}`, { params });
       return response.data;
     },
-    bulkEnroll: async (courseId: string, studentIds: string[]) => {
-      const response = await http.post("/admin/enrollments/bulk", { courseId, studentIds });
+    bulkAssign: async (projectId: string, employeeIds: string[]) => {
+      const response = await http.post("/admin/assignments/bulk", { projectId, employeeIds });
       return response.data;
     },
   },
@@ -266,161 +293,156 @@ export const adminApi = {
       const response = await http.get("/admin/reports/dashboard");
       return response.data;
     },
-    getStudentsCount: async (params?: any) => {
-      const response = await http.get("/admin/reports/students-count", { params });
+    getEmployeesCount: async (params?: any) => {
+      const response = await http.get("/admin/reports/employees-count", { params });
       return response.data;
     },
-    getCoursesCount: async (params?: any) => {
-      const response = await http.get("/admin/reports/courses-count", { params });
+    getProjectsCount: async (params?: any) => {
+      const response = await http.get("/admin/reports/projects-count", { params });
       return response.data;
     },
-    getTodayClasses: async () => {
-      const response = await http.get("/admin/reports/today-classes");
+    getTodayMeetings: async () => {
+      const response = await http.get("/admin/reports/today-meetings");
       return response.data;
     },
-    getTeacherWorkload: async () => {
-      const response = await http.get("/admin/reports/teacher-workload");
+    getManagerWorkload: async () => {
+      const response = await http.get("/admin/reports/manager-workload");
       return response.data;
     },
   },
 };
 
-
 export interface GradeData {
-  studentId: string;
-  courseId: string;
-  assessmentType: string;
-  assessmentName: string;
-  maxMarks: number;
-  obtainedMarks: number;
+  employeeId: string;
+  projectId: string;
+  reviewType: string;
+  reviewName: string;
+  maxScore: number;
+  obtainedScore: number;
   remarks?: string;
 }
 
 export interface RemarkData {
-  studentId: string;
-  courseId?: string;
+  employeeId: string;
+  projectId?: string;
   remark: string;
 }
 
-export const teacherApi = {
+export const managerApi = {
   getDashboardStats: async () => {
-    const response = await http.get("/teacher/dashboard/stats");
+    const response = await http.get("/manager/dashboard/stats");
     return response.data;
   },
 
-  courses: {
+  projects: {
     getAll: async () => {
-      const response = await http.get("/teacher/courses");
+      const response = await http.get("/manager/projects");
       return response.data;
     },
-    getById: async (courseId: string) => {
-      const response = await http.get(`/teacher/courses/${courseId}`);
+    getById: async (projectId: string) => {
+      const response = await http.get(`/manager/projects/${projectId}`);
       return response.data;
     },
-    getStudents: async (courseId: string) => {
-      const response = await http.get(`/teacher/courses/${courseId}/students`);
+    getEmployees: async (projectId: string) => {
+      const response = await http.get(`/manager/projects/${projectId}/employees`);
       return response.data;
     },
   },
 
-  grades: {
-    getAll: async (courseId: string) => {
-      const response = await http.get(`/teacher/grades/course/${courseId}`);
+  performances: {
+    getAll: async (projectId: string) => {
+      const response = await http.get(`/manager/performances/project/${projectId}`);
       return response.data;
     },
-    getStudentGrades: async (studentId: string) => {
-      const response = await http.get(`/teacher/grades/student/${studentId}`);
+    getEmployeePerformances: async (employeeId: string) => {
+      const response = await http.get(`/manager/performances/employee/${employeeId}`);
       return response.data;
     },
     create: async (data: GradeData) => {
-      const response = await http.post("/teacher/grades", data);
+      const response = await http.post("/manager/performances", data);
       return response.data;
     },
     update: async (id: string, data: Partial<GradeData>) => {
-      const response = await http.put(`/teacher/grades/${id}`, data);
+      const response = await http.put(`/manager/performances/${id}`, data);
       return response.data;
     },
   },
 
   schedule: {
     get: async () => {
-      const response = await http.get("/teacher/schedules");
+      const response = await http.get("/manager/schedules");
       return response.data;
     },
     update: async (id: string, data: any) => {
-      const response = await http.put(`/teacher/schedules/${id}`, data);
+      const response = await http.put(`/manager/schedules/${id}`, data);
       return response.data;
     },
   },
 
   remarks: {
     create: async (data: RemarkData) => {
-      const response = await http.post("/teacher/remarks", data);
+      const response = await http.post("/manager/remarks", data);
       return response.data;
     },
-    getStudentRemarks: async (studentId: string) => {
-      const response = await http.get(`/teacher/remarks/student/${studentId}`);
+    getEmployeeRemarks: async (employeeId: string) => {
+      const response = await http.get(`/manager/remarks/employee/${employeeId}`);
       return response.data;
     },
   },
 };
 
-
-export const studentApi = {
+export const employeeApi = {
   profile: {
     get: async () => {
-      const response = await http.get("/student/profile");
+      const response = await http.get("/employee/profile");
       return response.data;
     },
     update: async (data: any) => {
-      const response = await http.put("/student/profile", data);
+      const response = await http.put("/employee/profile", data);
       return response.data;
     },
   },
 
-  courses: {
+  projects: {
     getAll: async () => {
-      const response = await http.get("/student/courses");
+      const response = await http.get("/employee/projects");
       return response.data;
     },
-    
     getAvailable: async () => {
-      const response = await http.get("/student/courses/available");
+      const response = await http.get("/employee/projects/available");
       return response.data;
     },
-    
-    getById: async (courseId: string) => {
-      const response = await http.get(`/student/courses/${courseId}`);
+    getById: async (projectId: string) => {
+      const response = await http.get(`/employee/projects/${projectId}`);
       return response.data;
     },
-    
-    enroll: async (courseId: string) => {
-      const response = await http.post("/student/enroll", { courseId });
+    assign: async (projectId: string) => {
+      const response = await http.post("/employee/assign", { projectId });
       return response.data;
     },
   },
 
   schedule: {
     get: async () => {
-      const response = await http.get("/student/schedule");
+      const response = await http.get("/employee/schedule");
       return response.data;
     },
   },
 
-  grades: {
+  performances: {
     getAll: async () => {
-      const response = await http.get("/student/grades");
+      const response = await http.get("/employee/performances");
       return response.data;
     },
-    getByCourse: async (courseId: string) => {
-      const response = await http.get(`/student/grades/course/${courseId}`);
+    getByProject: async (projectId: string) => {
+      const response = await http.get(`/employee/performances/project/${projectId}`);
       return response.data;
     },
   },
 
   progress: {
     get: async () => {
-      const response = await http.get("/student/progress");
+      const response = await http.get("/employee/progress");
       return response.data;
     },
   },

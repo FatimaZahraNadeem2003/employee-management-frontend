@@ -20,7 +20,7 @@ function SignupPage() {
     lastName: "",
     email: "",
     password: "",
-    role: "student",
+    role: "employee",
   });
 
   useEffect(() => {
@@ -42,9 +42,9 @@ function SignupPage() {
       router.push(
         user.role === "admin"
           ? "/Admin/dashboard"
-          : user.role === "teacher"
-            ? "/Teacher/dashboard"
-            : "/Student/dashboard",
+          : user.role === "manager"
+            ? "/Manager/dashboard"
+            : "/Employee/dashboard",
       );
     }
   }, [isAuthenticated, user, router]);
@@ -246,8 +246,8 @@ function SignupPage() {
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-3 bg-white/20 border border-white/30 rounded-lg text-gray-800 appearance-none cursor-pointer focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/50 transition-all duration-300 hover:bg-white/30"
                 >
-                  <option value="student" className="bg-white text-gray-800">🎓 Student</option>
-                  <option value="teacher" className="bg-white text-gray-800">👨‍🏫 Teacher</option>
+                  <option value="employee" className="bg-white text-gray-800">🎓 Employee</option>
+                  <option value="manager" className="bg-white text-gray-800">👨‍🏫 Manager</option>
                   <option value="admin" className="bg-white text-gray-800">⚙️ Admin</option>
                 </select>
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -260,8 +260,8 @@ function SignupPage() {
 
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 border border-white/30 animate-fade-in-up" style={{ animationDelay: "0.6s" }}>
               <p className="text-sm text-gray-800">
-                {form.role === "student" && "🎓 Access courses, track progress, and learn at your own pace"}
-                {form.role === "teacher" && "👨‍🏫 Create courses, manage students, and share your knowledge"}
+                {form.role === "employee" && "🎓 Access courses, track progress, and learn at your own pace"}
+                {form.role === "manager" && "👨‍🏫 Create courses, manage employees, and share your knowledge"}
                 {form.role === "admin" && "⚙️ Full platform access, user management, and system settings"}
               </p>
             </div>
@@ -272,7 +272,7 @@ function SignupPage() {
                 disabled={loading}
                 className="relative w-full group overflow-hidden rounded-lg p-[2px] focus:outline-none focus:ring-2 focus:ring-yellow-400/50"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 animate-gradient-x"></div>
+                <div className="absolute insset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 animate-gradient-x"></div>
                 <div className="relative px-6 py-3 bg-white rounded-lg group-hover:bg-opacity-90 transition-all duration-300">
                   {loading ? (
                     <span className="flex items-center justify-center text-gray-800">

@@ -96,57 +96,71 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (firstName: string, lastName: string, email: string, password: string, role: string) => {
-    try {
-      console.log('Registering user:', { firstName, lastName, email, role });
-      
-      const response = await http.post('/auth/register', { 
-        firstName, 
-        lastName, 
-        email, 
-        password, 
-        role 
-      });
-      
-      console.log('Registration response:', response.data);
-      
-      const { user: userData, token: authToken } = response.data;
-      
-      localStorage.setItem('token', authToken);
-      setToken(authToken);
-      setUser(userData);
-      
-      toast.success('Account created successfully!', {
-        icon: '🎉',
-        style: {
-          borderRadius: '10px',
-          background: '#fff',
-          color: '#333',
-        },
-      });
+const register = async (firstName: string, lastName: string, email: string, password: string, role: string) => {
+  try {
+    console.log('Registering user:', { firstName, lastName, email, role });
+    
+    const registerData: any = { 
+      firstName, 
+      lastName, 
+      email, 
+      password, 
+      role 
+    };
 
-      if (userData.role === 'admin') {
-        router.push('/Admin/dashboard');
-      } else if (userData.role === 'manager') {
-        router.push('/Manager/dashboard');
-      } else {
-        router.push('/Employee/dashboard');
-      }
-      
-    } catch (error: any) {
-      console.error('Registration error in context:', error);
-      const errorMessage = error.response?.data?.msg || error.response?.data?.message || 'Registration failed';
-      toast.error(errorMessage, {
-        icon: '❌',
-        style: {
-          borderRadius: '10px',
-          background: '#fff',
-          color: '#333',
-        },
-      });
-      throw error;
+    if (role === 'employee') {
+      registerData.employeeId = `EMP${Date.now()}`;
+      registerData.position = 'Not Assigned';
+      registerData.department = 'Not Assigned';
+      registerData.contactNumber = '';
+    } else if (role === 'manager') {
+      registerData.employeeId = `MGR${Date.now()}`;
+      registerData.department = 'Not Assigned';
+      registerData.qualification = 'Not Specified';
+      registerData.contactNumber = '';
     }
-  };
+    
+    const response = await http.post('/auth/register', registerData);
+    
+    console.log('Registration response:', response.data);
+    
+    const { user: userData, token: authToken } = response.data;
+    
+    localStorage.setItem('token', authToken);
+    setToken(authToken);
+    setUser(userData);
+    
+    toast.success('Account created successfully!', {
+      icon: '🎉',
+      style: {
+        borderRadius: '10px',
+        background: '#fff',
+        color: '#333',
+      },
+    });
+
+    if (userData.role === 'admin') {
+      router.push('/Admin/dashboard');
+    } else if (userData.role === 'manager') {
+      router.push('/Manager/dashboard');
+    } else {
+      router.push('/Employee/dashboard');
+    }
+    
+  } catch (error: any) {
+    console.error('Registration error in context:', error);
+    const errorMessage = error.response?.data?.msg || error.response?.data?.message || 'Registration failed';
+    toast.error(errorMessage, {
+      icon: '❌',
+      style: {
+        borderRadius: '10px',
+        background: '#fff',
+        color: '#333',
+      },
+    });
+    throw error;
+  }
+};
 
   const logout = () => {
     if (typeof window !== 'undefined') {
