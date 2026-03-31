@@ -137,7 +137,7 @@ const AdminDashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-white font-semibold flex items-center gap-2">
               <Calendar className="w-5 h-5 text-teal-400" />
-              Today's Meetings
+              {`Today's Meetings`}
             </h2>
             <span className="text-white/80 text-sm">
               {stats?.todayMeetings.count || 0} meetings
