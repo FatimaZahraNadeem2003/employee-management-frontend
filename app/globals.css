@@ -121,7 +121,6 @@ body {
   font-weight: 500;
 }
 
-/* New teal/cyan/indigo theme colors */
 .bg-gradient-primary {
   background: linear-gradient(135deg, #14b89e 0%, #06b6d4 50%, #6366f1 100%);
 }
