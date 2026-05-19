@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { User } from '@/types/user';
 import http from '@/services/http';
 import toast from 'react-hot-toast';
@@ -15,6 +15,7 @@ interface AuthContextType {
   register: (firstName: string, lastName: string, email: string, password: string, role: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: () => boolean;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,8 +30,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
+  const refreshUser = useCallback(async () => {
+    const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    
+    if (!storedToken) {
+      setUser(null);
+      setToken(null);
+      return;
+    }
+
+    try {
+      const response = await http.get('/auth/me');
+      if (response.data.user) {
+        setUser(response.data.user);
+        setToken(storedToken);
+      } else {
+        localStorage.removeItem('token');
+        setUser(null);
+        setToken(null);
+      }
+    } catch (error) {
+      console.error('Refresh user error:', error);
+      localStorage.removeItem('token');
+      setUser(null);
+      setToken(null);
+    }
+  }, []);
+
   useEffect(() => {
     const initializeAuth = async () => {
+      setLoading(true);
       const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       
       if (storedToken) {
@@ -55,6 +84,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     initializeAuth();
   }, []);
+
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'token') {
+        if (e.newValue) {
+          refreshUser();
+        } else {
+          setUser(null);
+          setToken(null);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [refreshUser]);
 
   const login = async (email: string, password: string, role?: string) => {
     try {
@@ -96,71 +141,71 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-const register = async (firstName: string, lastName: string, email: string, password: string, role: string) => {
-  try {
-    console.log('Registering user:', { firstName, lastName, email, role });
-    
-    const registerData: any = { 
-      firstName, 
-      lastName, 
-      email, 
-      password, 
-      role 
-    };
+  const register = async (firstName: string, lastName: string, email: string, password: string, role: string) => {
+    try {
+      console.log('Registering user:', { firstName, lastName, email, role });
+      
+      const registerData: any = { 
+        firstName, 
+        lastName, 
+        email, 
+        password, 
+        role 
+      };
 
-    if (role === 'employee') {
-      registerData.employeeId = `EMP${Date.now()}`;
-      registerData.position = 'Not Assigned';
-      registerData.department = 'Not Assigned';
-      registerData.contactNumber = '';
-    } else if (role === 'manager') {
-      registerData.employeeId = `MGR${Date.now()}`;
-      registerData.department = 'Not Assigned';
-      registerData.qualification = 'Not Specified';
-      registerData.contactNumber = '';
-    }
-    
-    const response = await http.post('/auth/register', registerData);
-    
-    console.log('Registration response:', response.data);
-    
-    const { user: userData, token: authToken } = response.data;
-    
-    localStorage.setItem('token', authToken);
-    setToken(authToken);
-    setUser(userData);
-    
-    toast.success('Account created successfully!', {
-      icon: '🎉',
-      style: {
-        borderRadius: '10px',
-        background: '#fff',
-        color: '#333',
-      },
-    });
+      if (role === 'employee') {
+        registerData.employeeId = `EMP${Date.now()}`;
+        registerData.position = 'Not Assigned';
+        registerData.department = 'Not Assigned';
+        registerData.contactNumber = '';
+      } else if (role === 'manager') {
+        registerData.employeeId = `MGR${Date.now()}`;
+        registerData.department = 'Not Assigned';
+        registerData.qualification = 'Not Specified';
+        registerData.contactNumber = '';
+      }
+      
+      const response = await http.post('/auth/register', registerData);
+      
+      console.log('Registration response:', response.data);
+      
+      const { user: userData, token: authToken } = response.data;
+      
+      localStorage.setItem('token', authToken);
+      setToken(authToken);
+      setUser(userData);
+      
+      toast.success('Account created successfully!', {
+        icon: '🎉',
+        style: {
+          borderRadius: '10px',
+          background: '#fff',
+          color: '#333',
+        },
+      });
 
-    if (userData.role === 'admin') {
-      router.push('/Admin/dashboard');
-    } else if (userData.role === 'manager') {
-      router.push('/Manager/dashboard');
-    } else {
-      router.push('/Employee/dashboard');
+      if (userData.role === 'admin') {
+        router.push('/Admin/dashboard');
+      } else if (userData.role === 'manager') {
+        router.push('/Manager/dashboard');
+      } else {
+        router.push('/Employee/dashboard');
+      }
+      
+    } catch (error: any) {
+      console.error('Registration error in context:', error);
+      const errorMessage = error.response?.data?.msg || error.response?.data?.message || 'Registration failed';
+      toast.error(errorMessage, {
+        icon: '❌',
+        style: {
+          borderRadius: '10px',
+          background: '#fff',
+          color: '#333',
+        },
+      });
+      throw error;
     }
-    
-  } catch (error: any) {
-    console.error('Registration error in context:', error);
-    const errorMessage = error.response?.data?.msg || error.response?.data?.message || 'Registration failed';
-    toast.error(errorMessage, {
-      icon: '❌',
-      style: {
-        borderRadius: '10px',
-        background: '#fff',
-        color: '#333',
-      },
-    });
-    throw error;
-  }
-};
+  };
 
   const logout = () => {
     if (typeof window !== 'undefined') {
@@ -172,9 +217,10 @@ const register = async (firstName: string, lastName: string, email: string, pass
     router.push('/');
   };
 
-  const isAuthenticated = () => {
-    return !!token;
-  };
+  const isAuthenticated = useCallback(() => {
+    const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    return !!storedToken && !!user;
+  }, [user]);
 
   const contextValue: AuthContextType = {
     user,
@@ -184,6 +230,7 @@ const register = async (firstName: string, lastName: string, email: string, pass
     register,
     logout,
     isAuthenticated,
+    refreshUser,
   };
 
   return (
